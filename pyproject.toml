@@ -1,0 +1,30 @@
+[project]
+name = "sesha-orchestrator"
+version = "0.1.0"
+description = "Sesha Mind: multi-agent RLM runtime (coordinator/planner/coder/researcher/vision/critic) over A2A"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "GPL-3.0-or-later" }
+authors = [{ name = "Gagan Jain" }]
+dependencies = ["mcp[cli]>=1.0", "fastmcp>=0.1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+sesha-orchestrator-mcp = "sesha_orchestrator.server:main"
+
+[tool.uv]
+environments = ["sys_platform == 'linux'"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "UP", "B", "SIM", "I"]
+ignore = ["E402"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
