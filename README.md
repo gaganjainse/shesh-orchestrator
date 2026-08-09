@@ -1,5 +1,12 @@
-# 🎼 shesha-orchestrator
+# shesha-orchestrator
 
+**multi-agent RLM runtime** — Coordinator/planner/coder/researcher/vision/critic over an A2A bus.
+
+- Layer: Mind (Mind)
+- License: GPL-3.0
+- Part of: [Shesha ecosystem](https://github.com/gaganjainse/shesha-ecosystem)
+
+---
 **Multi-agent RLM runtime for Shesha.** A coordinator decomposes goals into
 steps and routes them to role-based child agents (planner, coder, researcher,
 vision, critic), with an A2A-lite message bus and turn/token/time budgets.
