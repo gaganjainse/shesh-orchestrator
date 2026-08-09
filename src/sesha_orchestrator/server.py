@@ -11,7 +11,7 @@ from .agents import Agent, Budget
 from .bus import Message, MessageBus
 from .orchestrator import Orchestrator, make_agent
 
-mcp = FastMCP("sesha-orchestrator")
+mcp = FastMCP("shesha-orchestrator")
 
 _bus = MessageBus()
 

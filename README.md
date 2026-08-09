@@ -1,12 +1,12 @@
-# 🎼 sesha-orchestrator
+# 🎼 shesha-orchestrator
 
-**Multi-agent RLM runtime for Sesha.** A coordinator decomposes goals into
+**Multi-agent RLM runtime for Shesha.** A coordinator decomposes goals into
 steps and routes them to role-based child agents (planner, coder, researcher,
 vision, critic), with an A2A-lite message bus and turn/token/time budgets.
 
 - License: GPL-3.0
 - Layer: Mind
-- Part of: [Sesha ecosystem](https://github.com/gaganjainse/sesha-ecosystem)
+- Part of: [Shesha ecosystem](https://github.com/gaganjainse/shesha-ecosystem)
 
 ## Design
 
@@ -31,5 +31,5 @@ vision, critic), with an A2A-lite message bus and turn/token/time budgets.
 uv sync --extra dev
 uv run pytest -q        # 9 offline tests
 uv run ruff check .
-uv run sesha-orchestrator-mcp
+uv run shesha-orchestrator-mcp
 ```

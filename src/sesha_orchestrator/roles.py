@@ -13,7 +13,7 @@ class Role:
     system_prompt: str = ""
 
 
-# Roles map to the 6 GB-safe models; larger SeshaOS models can be substituted.
+# Roles map to the 6 GB-safe models; larger SheshaOS models can be substituted.
 ROLES: dict[str, Role] = {
     "coordinator": Role(
         name="coordinator", model="primary",

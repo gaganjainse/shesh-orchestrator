@@ -1,7 +1,7 @@
 [project]
-name = "sesha-orchestrator"
+name = "shesha-orchestrator"
 version = "0.1.0"
-description = "Sesha Mind: multi-agent RLM runtime (coordinator/planner/coder/researcher/vision/critic) over A2A"
+description = "Shesha Mind: multi-agent RLM runtime (coordinator/planner/coder/researcher/vision/critic) over A2A"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "GPL-3.0-or-later" }
@@ -12,7 +12,7 @@ dependencies = ["mcp[cli]>=1.0", "fastmcp>=0.1"]
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]
-sesha-orchestrator-mcp = "sesha_orchestrator.server:main"
+shesha-orchestrator-mcp = "shesha_orchestrator.server:main"
 
 [tool.uv]
 environments = ["sys_platform == 'linux'"]
