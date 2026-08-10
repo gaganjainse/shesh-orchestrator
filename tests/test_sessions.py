@@ -12,7 +12,7 @@ from shesha_orchestrator.sessions import SessionManager  # noqa: E402
 
 
 def _agents():
-    return {n: make_agent(n, lambda p, c: {"ok": True, "by": n})
+    return {n: make_agent(n, (lambda n: (lambda p, c: {"ok": True, "by": n}))(n))
             for n in ("researcher", "coder", "critic", "coordinator")}
 
 
@@ -30,7 +30,6 @@ def test_start_runs_to_completion():
 
 
 def test_cancel_stops_session():
-    import threading
     agents = _agents()
     # A slow agent gives the main thread time to cancel before step 2.
     def slow(p, c):
@@ -38,7 +37,8 @@ def test_cancel_stops_session():
         return {"ok": True}
     agents["coder"] = make_agent("coder", slow)
     mgr = SessionManager(agents)
-    mgr.planner = lambda g, c: {"steps": [{"role": "coder", "instruction": f"step {i}"} for i in range(20)]}
+    mgr.planner = lambda g, c: {"steps": [
+        {"role": "coder", "instruction": f"step {i}"} for i in range(20)]}
     s = mgr.start("long task")
     mgr.cancel(s.id)
     for _ in range(100):

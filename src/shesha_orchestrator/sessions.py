@@ -13,8 +13,9 @@ from __future__ import annotations
 import threading
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Callable
+from datetime import UTC, datetime
+from typing import Any
+from collections.abc import Callable
 
 from .agents import Agent, Budget
 from .bus import MessageBus
@@ -42,7 +43,7 @@ class SessionState:
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 class SessionManager:
@@ -78,14 +79,8 @@ class SessionManager:
         try:
             orch = Orchestrator(self.agents, bus=self.bus, budget=self.budget)
 
-            # Hook: check for cancellation between steps.
-            original_execute = orch.execute
-
-            def cancellable(goal, planner, critic, context=None):  # type: ignore
-                return self._execute_with_cancel(sid, orch, goal, planner, critic, context)
-
-            result: ExecutionResult = cancellable(
-                state.goal, self.planner, self.critic)
+            result: ExecutionResult = self._execute_with_cancel(sid, orch, 
+                state.goal, self.planner, self.critic, context=None)
             with self._lock:
                 state.trace = result.trace
                 state.result = {
