@@ -5,11 +5,11 @@ can actually reason. Each takes (prompt, context) and returns the dict shape
 the Orchestrator expects.
 
 Design:
-- The model client is injectable (like shesha-mind's OllamaClient), so tests
+- The model client is injectable (like shesh-mind's OllamaClient), so tests
   pass in a fake and production passes an HTTP client.
 - Output is parsed from a strict JSON block; if parsing fails, we fall back
   to the deterministic stub so a flaky model never crashes a run.
-- The router (shesha-mind) chooses the model per role.
+- The router (shesh-mind) chooses the model per role.
 """
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ from typing import Any
 ModelClient = Callable[[str, str], str]
 
 PLANNER_SYSTEM = (
-    "You are the planner for the Shesha multi-agent system. Given a goal, "
+    "You are the planner for the Shesh multi-agent system. Given a goal, "
     "return ONLY a JSON object of the form "
     '{"steps": [{"role": "researcher|coder|vision|critic", "instruction": "..."}]}. '
     "Use researcher first when information is needed, coder to act, critic last. "

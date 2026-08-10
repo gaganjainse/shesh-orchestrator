@@ -7,8 +7,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from shesha_orchestrator.orchestrator import make_agent  # noqa: E402
-from shesha_orchestrator.sessions import SessionManager  # noqa: E402
+from shesh_orchestrator.orchestrator import make_agent  # noqa: E402
+from shesh_orchestrator.sessions import SessionManager  # noqa: E402
 
 
 def _agents():

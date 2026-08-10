@@ -1,7 +1,7 @@
 """MCP server exposing the orchestrator.
 
 In production, handlers are LLM-backed agents via Ollama (selected by
-shesha-mind routing). If Ollama is unreachable, deterministic stubs keep
+shesh-mind routing). If Ollama is unreachable, deterministic stubs keep
 the server usable for tests and offline operation. The LLM client and model
 router are injected/lazily constructed so tests can replace them.
 """
@@ -12,7 +12,7 @@ import os
 from mcp.server.fastmcp import FastMCP
 
 try:
-    from shesha_audit.mcp_guard import GuardedMCP as _MCP
+    from shesh_audit.mcp_guard import GuardedMCP as _MCP
 except ImportError:  # audit not installed; fall back to plain FastMCP
     _MCP = FastMCP
 
@@ -23,7 +23,7 @@ from .orchestrator import Orchestrator, make_agent
 from .sessions import SessionManager
 from .stubs import always_approve, default_planner, echo_agent
 
-mcp = _MCP("shesha-orchestrator")
+mcp = _MCP("shesh-orchestrator")
 
 _bus = MessageBus()
 _agents: dict[str, Agent] = {}
@@ -43,8 +43,8 @@ def _get_llm() -> LLMAgents:
         return _llm
 
     try:
-        from shesha_mind.client import OllamaClient, http_transport
-        from shesha_mind.router import ModelRouter
+        from shesh_mind.client import OllamaClient, http_transport
+        from shesh_mind.router import ModelRouter
 
         client = OllamaClient(http_transport(_ollama_url()))
         if not client.list_models():
@@ -52,7 +52,7 @@ def _get_llm() -> LLMAgents:
         router = ModelRouter()
 
         def model_for(role: str) -> str:
-            from shesha_mind.router import Role
+            from shesh_mind.router import Role
             return router.select(Role(role)).model
 
         _llm = LLMAgents(client=client.generate, model_for_role=model_for)

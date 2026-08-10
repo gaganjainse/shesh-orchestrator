@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from shesha_orchestrator.traces import TraceRecorder  # noqa: E402
+from shesh_orchestrator.traces import TraceRecorder  # noqa: E402
 
 
 def test_span_records_to_jsonl(tmp_path):

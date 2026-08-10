@@ -1,18 +1,18 @@
 [project]
-name = "shesha-orchestrator"
+name = "shesh-orchestrator"
 version = "0.1.0"
-description = "Shesha Mind: multi-agent RLM runtime (coordinator/planner/coder/researcher/vision/critic) over A2A"
+description = "Shesh Mind: multi-agent RLM runtime (coordinator/planner/coder/researcher/vision/critic) over A2A"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "GPL-3.0-or-later" }
 authors = [{ name = "Gagan Jain" }]
-dependencies = ["mcp[cli]>=1.0", "fastmcp>=0.1", "shesha-audit>=0.1", "shesha-mind>=0.1"]
+dependencies = ["mcp[cli]>=1.0", "fastmcp>=0.1", "shesh-audit>=0.1", "shesh-mind>=0.1"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]
-shesha-orchestrator-mcp = "shesha_orchestrator.server:main"
+shesh-orchestrator-mcp = "shesh_orchestrator.server:main"
 
 [tool.uv]
 environments = ["sys_platform == 'linux'"]

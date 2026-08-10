@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from shesha_orchestrator.llm import LLMAgents, _extract_json  # noqa: E402
+from shesh_orchestrator.llm import LLMAgents, _extract_json  # noqa: E402
 
 
 def fake_client(response: str):

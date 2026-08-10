@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any
 
 DEFAULT_SOCKET = Path(
-    os.environ.get("SHESHA_A2A_SOCKET", "/run/user/{os.getuid()}/shesha-a2a.sock")
+    os.environ.get("SHESH_A2A_SOCKET", "/run/user/{os.getuid()}/shesh-a2a.sock")
 )
 
 

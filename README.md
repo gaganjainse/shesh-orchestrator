@@ -1,19 +1,19 @@
-# shesha-orchestrator
+# shesh-orchestrator
 
 **multi-agent RLM runtime** — Coordinator/planner/coder/researcher/vision/critic over an A2A bus.
 
 - Layer: Mind (Mind)
 - License: GPL-3.0
-- Part of: [Shesha ecosystem](https://github.com/gaganjainse/shesha-ecosystem)
+- Part of: [Shesh ecosystem](https://github.com/gaganjainse/shesh-ecosystem)
 
 ---
-**Multi-agent RLM runtime for Shesha.** A coordinator decomposes goals into
+**Multi-agent RLM runtime for Shesh.** A coordinator decomposes goals into
 steps and routes them to role-based child agents (planner, coder, researcher,
 vision, critic), with an A2A-lite message bus and turn/token/time budgets.
 
 - License: GPL-3.0
 - Layer: Mind
-- Part of: [Shesha ecosystem](https://github.com/gaganjainse/shesha-ecosystem)
+- Part of: [Shesh ecosystem](https://github.com/gaganjainse/shesh-ecosystem)
 
 ## Design
 
@@ -38,5 +38,5 @@ vision, critic), with an A2A-lite message bus and turn/token/time budgets.
 uv sync --extra dev
 uv run pytest -q        # 9 offline tests
 uv run ruff check .
-uv run shesha-orchestrator-mcp
+uv run shesh-orchestrator-mcp
 ```

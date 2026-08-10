@@ -1,4 +1,4 @@
-"""shesha-orchestrator: multi-agent RLM runtime.
+"""shesh-orchestrator: multi-agent RLM runtime.
 
 Implements the Recursive Language Model pattern (from Prime Agent) at small,
 local-first scale:

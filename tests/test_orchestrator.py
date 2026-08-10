@@ -6,13 +6,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from shesha_orchestrator.agents import Budget  # noqa: E402
-from shesha_orchestrator.bus import Message, MessageBus  # noqa: E402
-from shesha_orchestrator.orchestrator import (  # noqa: E402
+from shesh_orchestrator.agents import Budget  # noqa: E402
+from shesh_orchestrator.bus import Message, MessageBus  # noqa: E402
+from shesh_orchestrator.orchestrator import (  # noqa: E402
     Orchestrator,
     make_agent,
 )
-from shesha_orchestrator.roles import ROLES, role  # noqa: E402
+from shesh_orchestrator.roles import ROLES, role  # noqa: E402
 
 
 def _agents(**handlers):
