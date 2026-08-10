@@ -20,6 +20,7 @@ from collections.abc import Callable
 from .agents import Agent, Budget
 from .bus import MessageBus
 from .orchestrator import ExecutionResult, Orchestrator
+from .traces import get_recorder
 from .stubs import always_approve, default_planner
 
 
@@ -76,13 +77,17 @@ class SessionManager:
 
     def _run(self, sid: str) -> None:
         state = self._sessions[sid]
+        recorder = get_recorder()
         try:
-            orch = Orchestrator(self.agents, bus=self.bus, budget=self.budget)
+            with recorder.trace(f'session:{sid}', goal=state.goal) as span:
+                state_span = span
+                orch = Orchestrator(self.agents, bus=self.bus, budget=self.budget)
 
             result: ExecutionResult = self._execute_with_cancel(sid, orch, 
                 state.goal, self.planner, self.critic, context=None)
             with self._lock:
                 state.trace = result.trace
+                state_span.set_attribute('steps', len(result.steps))
                 state.result = {
                     "ok": result.ok,
                     "steps": [{"role": s.role, "status": s.status} for s in result.steps],
