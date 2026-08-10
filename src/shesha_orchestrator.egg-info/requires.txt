@@ -1,8 +1,0 @@
-mcp[cli]>=1.0
-fastmcp>=0.1
-shesha-audit>=0.1
-shesha-mind>=0.1
-
-[dev]
-pytest>=8.0
-ruff>=0.6
