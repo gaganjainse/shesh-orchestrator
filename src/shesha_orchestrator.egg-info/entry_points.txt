@@ -1,0 +1,2 @@
+[console_scripts]
+shesha-orchestrator-mcp = shesha_orchestrator.server:main
