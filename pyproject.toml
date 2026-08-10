@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "GPL-3.0-or-later" }
 authors = [{ name = "Gagan Jain" }]
-dependencies = ["mcp[cli]>=1.0", "fastmcp>=0.1"]
+dependencies = ["mcp[cli]>=1.0", "fastmcp>=0.1", "shesha-audit>=0.1"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]

@@ -7,11 +7,16 @@ from __future__ import annotations
 
 from mcp.server.fastmcp import FastMCP
 
+try:
+    from shesha_audit.mcp_guard import GuardedMCP as _MCP
+except ImportError:
+    _MCP = FastMCP
+
 from .agents import Agent, Budget
 from .bus import Message, MessageBus
 from .orchestrator import Orchestrator, make_agent
 
-mcp = FastMCP("shesha-orchestrator")
+mcp = _MCP("shesha-orchestrator")
 
 _bus = MessageBus()
 
