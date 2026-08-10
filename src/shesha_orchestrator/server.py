@@ -20,6 +20,7 @@ from .agents import Agent, Budget
 from .bus import Message, MessageBus
 from .llm import LLMAgents
 from .orchestrator import Orchestrator, make_agent
+from .sessions import SessionManager
 from .stubs import always_approve, default_planner, echo_agent
 
 mcp = _MCP("shesha-orchestrator")
@@ -124,6 +125,44 @@ def llm_status() -> dict:
                 "ollama_url": _ollama_url()}
     except Exception as e:  # noqa: BLE001
         return {"llm_available": False, "error": str(e)}
+
+
+
+_sessions: SessionManager | None = None
+
+
+def _get_sessions() -> SessionManager:
+    global _sessions
+    if _sessions is None:
+        _sessions = SessionManager(_ensure_agents())
+    return _sessions
+
+
+@mcp.tool()
+def start_session(goal: str) -> dict:
+    """Start a background agent session for a goal; returns its id for polling."""
+    state = _get_sessions().start(goal)
+    return state.to_dict()
+
+
+@mcp.tool()
+def get_session(session_id: str) -> dict:
+    """Return status/trace/result of a background session."""
+    state = _get_sessions().get(session_id)
+    return state.to_dict() if state else {"error": "not found"}
+
+
+@mcp.tool()
+def list_sessions() -> list[dict]:
+    """List all sessions."""
+    return [s.to_dict() for s in _get_sessions().list()]
+
+
+@mcp.tool()
+def cancel_session(session_id: str) -> dict:
+    """Cancel a running session."""
+    ok = _get_sessions().cancel(session_id)
+    return {"ok": ok}
 
 
 def main() -> None:
