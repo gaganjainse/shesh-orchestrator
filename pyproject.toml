@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "GPL-3.0-or-later" }
 authors = [{ name = "Gagan Jain" }]
-dependencies = ["mcp[cli]>=1.0", "fastmcp>=0.1", "shesh-audit>=0.1", "shesh-mind>=0.1"]
+dependencies = ["fastmcp>=3.4.7,<4", "shesh-audit>=0.1", "shesh-mind>=0.1"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]
@@ -26,7 +26,6 @@ select = ["E", "F", "W", "UP", "B", "SIM", "I"]
 ignore = ["E402"]
 
 [tool.pytest.ini_options]
-filterwarnings = ["ignore:.*lifespan.*:pydantic_settings.exceptions.IncompleteFieldDefinitionWarning"]
 
 pythonpath = ["src"]
 testpaths = ["tests"]

@@ -72,6 +72,9 @@ class _Broker(socketserver.ThreadingUnixStreamServer):
 
     def shutdown(self) -> None:
         super().shutdown()
+        # socketserver.shutdown() only stops serve_forever; without
+        # server_close() the listening FD leaks (ResourceWarning).
+        self.server_close()
         with contextlib.suppress(OSError):
             self.socket_path.unlink()
 
