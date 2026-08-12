@@ -9,12 +9,7 @@ from __future__ import annotations
 
 import os
 
-from fastmcp import FastMCP
-
-try:
-    from shesh_audit.mcp_guard import GuardedMCP as _MCP
-except ImportError:  # audit not installed; fall back to plain FastMCP
-    _MCP = FastMCP
+from shesh_audit.mcp_guard import GuardedMCP as _MCP
 
 from .agents import Agent, Budget
 from .bus import Message, MessageBus
