@@ -1,0 +1,14 @@
+version: 2
+# Keeps the 2026-08-13 SHA pins moving: pinned-but-stale is the failure mode
+# this file exists to prevent. Weekly, grouped, rebased automatically.
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule: { interval: "weekly" }
+    groups:
+      actions: { patterns: ["*"] }
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule: { interval: "weekly" }
+    groups:
+      python: { patterns: ["*"] }
