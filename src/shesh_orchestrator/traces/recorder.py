@@ -8,11 +8,11 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
-DEFAULT_TRACE_DIR = Path.home() / ".local" / "share" / "shesha" / "traces"
+DEFAULT_TRACE_DIR = Path.home() / ".local" / "share" / "shesh" / "traces"
 
 
 class Span:
-    def __init__(self, recorder: "TraceRecorder", name: str, attributes: dict) -> None:
+    def __init__(self, recorder: TraceRecorder, name: str, attributes: dict) -> None:
         self.recorder = recorder
         self.name = name
         self.attributes = attributes

@@ -6,3 +6,5 @@ This keeps the dependency footprint tiny while still giving observability:
 which model/tool ran, for how long, with what outcome.
 """
 from .recorder import TraceRecorder, get_recorder
+
+__all__ = ["TraceRecorder", "get_recorder"]

@@ -26,7 +26,7 @@ def test_span_records_to_jsonl(tmp_path):
 def test_span_failure(tmp_path):
     rec = TraceRecorder(tmp_path / "t.jsonl")
     try:
-        with rec.trace("boom") as s:
+        with rec.trace("boom"):
             raise RuntimeError("nope")
     except RuntimeError:
         pass

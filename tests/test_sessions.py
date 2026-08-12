@@ -12,8 +12,12 @@ from shesh_orchestrator.sessions import SessionManager  # noqa: E402
 
 
 def _agents():
-    return {n: make_agent(n, (lambda n: (lambda p, c: {"ok": True, "by": n}))(n))
-            for n in ("researcher", "coder", "critic", "coordinator")}
+    def make(n):
+        def run(p, c):
+            return {"ok": True, "by": n}
+        return run
+
+    return {n: make_agent(n, make(n)) for n in ("researcher", "coder", "critic", "coordinator")}
 
 
 def test_start_runs_to_completion():

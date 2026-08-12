@@ -6,22 +6,22 @@ re-connect later. This is the local, single-user analogue of Prime Agent's
 detach/reattach, built on top of the in-process Orchestrator and the A2A bus.
 
 Sessions are kept in an in-memory registry by default; a future version can
-persist them to ~/.local/state/shesha/orchestrator/.
+persist them to ~/.local/state/shesh/orchestrator/.
 """
 from __future__ import annotations
 
 import threading
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
-from collections.abc import Callable
 
 from .agents import Agent, Budget
 from .bus import MessageBus
 from .orchestrator import ExecutionResult, Orchestrator
-from .traces import get_recorder
 from .stubs import always_approve, default_planner
+from .traces import get_recorder
 
 
 @dataclass
@@ -83,7 +83,7 @@ class SessionManager:
                 state_span = span
                 orch = Orchestrator(self.agents, bus=self.bus, budget=self.budget)
 
-            result: ExecutionResult = self._execute_with_cancel(sid, orch, 
+            result: ExecutionResult = self._execute_with_cancel(sid, orch,
                 state.goal, self.planner, self.critic, context=None)
             with self._lock:
                 state.trace = result.trace
