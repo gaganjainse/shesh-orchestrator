@@ -22,6 +22,9 @@ line-length = 100
 target-version = "py311"
 
 [tool.ruff.lint]
+# BLE+TRY are errors, not style: blind `except Exception` is where silent
+# failures live. See shesh-ecosystem/docs (2026-08-12 silent-failure sweep).
+extend-select = ["BLE", "TRY"]
 select = ["E", "F", "W", "UP", "B", "SIM", "I"]
 ignore = ["E402"]
 

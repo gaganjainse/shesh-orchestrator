@@ -106,6 +106,7 @@ class _Handler(socketserver.StreamRequestHandler):
     def _route(self, recipient: str, msg: dict[str, Any], exclude=None) -> None:
         line = (json.dumps(msg) + "\n").encode()
         with self.server._lock:
+            dead = []
             for c in self.server._clients:
                 if c is exclude:
                     continue
@@ -114,7 +115,11 @@ class _Handler(socketserver.StreamRequestHandler):
                         c.wfile.write(line)
                         c.wfile.flush()
                     except (BrokenPipeError, OSError):
-                        pass
+                        # Client vanished mid-broadcast. Prune it instead of
+                        # writing to a dead socket on every future message.
+                        dead.append(c)
+            for c in dead:
+                self.server._clients.remove(c)
 
 
 def serve(socket_path: Path = DEFAULT_SOCKET) -> _Broker:

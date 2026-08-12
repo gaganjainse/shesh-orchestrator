@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
@@ -58,6 +59,7 @@ def _extract_json(text: str) -> dict | None:
         try:
             return json.loads(fence.group(1))
         except json.JSONDecodeError:
+            # Fenced block held non-JSON text — fall through to brace scan.
             pass
     # Balanced-brace scan so greedy .* doesn't eat trailing text.
     start = text.find("{")
@@ -87,15 +89,19 @@ class LLMAgents:
 
     def planner(self, goal: str, ctx: dict[str, Any]) -> dict:
         prompt = f"{PLANNER_SYSTEM}\n\nGoal: {goal}"
-        for _ in range(self.max_retries + 1):
+        last_error: BaseException | None = None
+        attempts = self.max_retries + 1
+        for _ in range(attempts):
             try:
                 raw = self.client(self.model_for_role("planner"), prompt)
                 parsed = _extract_json(raw)
                 if parsed and "steps" in parsed and parsed["steps"]:
                     return parsed
-            except Exception:  # noqa: BLE001 - network/model errors
-                pass
-        # Deterministic fallback so the run continues.
+            except Exception as e:  # noqa: BLE001 - network/model errors; fallback below
+                last_error = e
+        # Deterministic fallback so the run continues — announced, not silent.
+        print(f"llm planner failed {attempts}x ({last_error}); "
+              f"using deterministic fallback", file=sys.stderr)
         from .stubs import default_planner
         return default_planner(goal, ctx)
 
@@ -121,6 +127,7 @@ class LLMAgents:
             parsed = _extract_json(raw)
             if parsed and "approved" in parsed:
                 return parsed
-        except Exception:  # noqa: BLE001
-            pass
+            print("llm critic returned unparsable verdict; auto-approving", file=sys.stderr)
+        except Exception as e:  # noqa: BLE001 - network/model errors; policy below
+            print(f"llm critic unavailable ({e}); auto-approving per policy", file=sys.stderr)
         return {"approved": True, "notes": "critic unavailable; auto-approved"}

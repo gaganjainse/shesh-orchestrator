@@ -48,7 +48,14 @@ ROLES: dict[str, Role] = {
 }
 
 
+class UnknownRoleError(KeyError):
+    """role() was asked for a name that is not in ROLES."""
+
+    def __init__(self, name: str, known: list[str]) -> None:
+        super().__init__(f"unknown role {name!r}; choose from {known}")
+
+
 def role(name: str) -> Role:
     if name not in ROLES:
-        raise KeyError(f"unknown role {name!r}; choose from {sorted(ROLES)}")
+        raise UnknownRoleError(name, sorted(ROLES))
     return ROLES[name]

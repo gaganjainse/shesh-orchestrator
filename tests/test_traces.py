@@ -4,6 +4,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from shesh_orchestrator.traces import TraceRecorder  # noqa: E402
@@ -25,11 +27,12 @@ def test_span_records_to_jsonl(tmp_path):
 
 def test_span_failure(tmp_path):
     rec = TraceRecorder(tmp_path / "t.jsonl")
-    try:
-        with rec.trace("boom"):
-            raise RuntimeError("nope")
-    except RuntimeError:
-        pass
+
+    def boom():
+        raise RuntimeError("nope")
+
+    with pytest.raises(RuntimeError, match="nope"), rec.trace("boom"):
+        boom()
     import json
     r = json.loads((tmp_path / "t.jsonl").read_text())
     assert r["status"] == "error" and "nope" in r["attributes"]["error"]

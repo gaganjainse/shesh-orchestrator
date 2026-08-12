@@ -31,6 +31,21 @@ def _ollama_url() -> str:
     return os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
 
+
+class NoUsableModelError(RuntimeError):
+    """Ollama answered but serves no models; callers fall back to stub agents."""
+
+    def __init__(self) -> None:
+        super().__init__("no models available")
+
+
+def _require_models(client) -> None:
+    """Raise NoUsableModelError when the server has no models (kept out of
+    the caller's try body so the try only wraps calls, not control flow)."""
+    if not client.list_models():
+        raise NoUsableModelError()
+
+
 def _get_llm() -> LLMAgents:
     """Construct LLM agents on demand, or fall back to stubs if Ollama is down."""
     global _llm
@@ -42,8 +57,7 @@ def _get_llm() -> LLMAgents:
         from shesh_mind.router import ModelRouter
 
         client = OllamaClient(http_transport(_ollama_url()))
-        if not client.list_models():
-            raise RuntimeError("no models available")
+        _require_models(client)
         router = ModelRouter()
 
         def model_for(role: str) -> str:
