@@ -3,7 +3,7 @@
 **multi-agent RLM runtime** — Coordinator/planner/coder/researcher/vision/critic over an A2A bus.
 
 - Layer: Mind (Mind)
-- License: GPL-3.0
+- License: GPL-3.0-or-later
 - Part of: [Shesh ecosystem](https://github.com/gaganjainse/shesh-ecosystem)
 
 ---
@@ -11,7 +11,7 @@
 steps and routes them to role-based child agents (planner, coder, researcher,
 vision, critic), with an A2A-lite message bus and turn/token/time budgets.
 
-- License: GPL-3.0
+- License: GPL-3.0-or-later
 - Layer: Mind
 - Part of: [Shesh ecosystem](https://github.com/gaganjainse/shesh-ecosystem)
 
