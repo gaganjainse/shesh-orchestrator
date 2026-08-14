@@ -11,7 +11,7 @@ permissions: read-all
 
 jobs:
   component:
-    uses: gaganjainse/shesh-ecosystem/.github/workflows/component-ci.yml@main  # first-party reusable pipeline (D1); @main so rewrites never orphan the pin
+    uses: gaganjainse/shesh-ecosystem/.github/workflows/component-ci.yml@a392d20f5a07eb14b42a0c6522946276bbf2a798  # first-party reusable pipeline (D1); @main so rewrites never orphan the pin
     # Decision D1: pipeline definition lives in shesh-ecosystem; only
     # this repo's deltas below — do NOT vendor steps back into this file.
     with:
