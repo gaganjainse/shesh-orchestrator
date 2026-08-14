@@ -15,7 +15,9 @@ dev = ["pytest>=9.1", "ruff>=0.16"]
 shesh-orchestrator-mcp = "shesh_orchestrator.server:main"
 
 [tool.uv]
-environments = ["sys_platform == 'linux'"]
+
+[tool.uv.sources]
+shesh-core = { path = "../shesh-core", editable = true }
 
 [tool.ruff]
 line-length = 100

@@ -43,6 +43,10 @@ uv run ruff check .
 - `execute(goal, max_turns, max_tokens)` — plan → delegate → review
 - `list_roles()` · `post_message(role, content)`
 
+
+> **Reproducible install:** `uv.lock` pins the full dependency tree. Install with
+> `uv sync --frozen` (or `uv pip install -r <(uv export --frozen)`) for a locked build.
+
 ## Status
 
 Component CI is green (reusable ecosystem pipeline). Security posture and
