@@ -45,3 +45,6 @@ uv run shesh-orchestrator-mcp
 
 Security posture and vulnerability reporting: [canonical ecosystem security
 policy](https://github.com/gaganjainse/shesh-ecosystem/blob/main/SECURITY.md).
+## 📚 Docs
+
+Fleet-wide reading compilation: [shesh-docs](https://github.com/gaganjainse/shesh-docs).
