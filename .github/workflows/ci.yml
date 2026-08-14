@@ -11,7 +11,7 @@ permissions: read-all
 
 jobs:
   component:
-    uses: gaganjainse/shesh-ecosystem/.github/workflows/component-ci.yml@a2d13d4f6ab0d3685722824420a1fca588230525  # main — reusable pipeline; Dependabot moves the pin
+    uses: gaganjainse/shesh-ecosystem/.github/workflows/component-ci.yml@main  # first-party reusable pipeline (D1); @main so rewrites never orphan the pin
     # Decision D1: pipeline definition lives in shesh-ecosystem; only
     # this repo's deltas below — do NOT vendor steps back into this file.
     with:
