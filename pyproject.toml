@@ -13,7 +13,7 @@ authors = [{ name = "Gagan Jain" }]
 dependencies = ["fastmcp>=3.4.7,<4", "shesh-core>=0.1"]
 
 [project.optional-dependencies]
-dev = ["pytest>=9.1,<10", "pytest-asyncio>=0.24,<2", "ruff>=0.16,<1"]
+dev = ["pytest>=9.1,<10", "ruff>=0.16,<1"]
 
 [project.scripts]
 shesh-orchestrator-mcp = "shesh_orchestrator.server:main"
@@ -35,7 +35,5 @@ select = ["E", "F", "W", "UP", "B", "SIM", "I"]
 ignore = ["E402"]
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
-
 pythonpath = ["src"]
 testpaths = ["tests"]
