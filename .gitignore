@@ -1,8 +1,27 @@
+# Python
 __pycache__/
 *.py[cod]
+*.so
+*.egg
 *.egg-info/
-.venv/
-dist/
+.eggs/
 build/
+dist/
+
+# Environments
+.venv/
+venv/
+
+# Caches
 .pytest_cache/
 .ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Logs and local state
+*.log
+.DS_Store
+
+# uv.lock is committed deliberately: it pins the resolved tree for
+# reproducible installs. Do not add it here.
