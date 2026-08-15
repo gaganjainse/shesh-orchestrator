@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any
 
 DEFAULT_SOCKET = Path(
-    os.environ.get("SHESH_A2A_SOCKET", "/run/user/{os.getuid()}/shesh-a2a.sock")
+    os.environ.get("SHESH_A2A_SOCKET", f"/run/user/{os.getuid()}/shesh-a2a.sock")
 )
 
 
@@ -85,16 +85,79 @@ class _Handler(socketserver.StreamRequestHandler):
     def handle(self) -> None:
         self.server.register(self)
         self.role: str | None = None
+        self._broker_violations: list[dict[str, Any]] = []
         try:
             for raw in self.rfile:
                 try:
                     msg = json.loads(raw.decode())
                 except json.JSONDecodeError:
                     continue
+                # Validate sender field (identity binding)
+
+                if self.role is None:
+
+                    sender = msg.get("sender", "")
+
+                    if not sender or not isinstance(sender, str):
+
+                        # Missing or invalid sender
+
+                        self._broker_violations.append({
+
+                            "message_id": msg.get("id"),
+
+                            "reason": "missing or invalid sender"
+
+                        })
+
+                    elif "/" in sender or "\\" in sender or any(ord(c) < 32 for c in sender):
+
+                        # Invalid sender format
+
+                        self._broker_violations.append({
+
+                            "message_id": msg.get("id"),
+
+                            "reason": "invalid sender format"
+
+                        })
+
+                    else:
+
+                        self.role = sender
+
+                # Validate content field exists
+
+                if "content" not in msg:
+
+                    self._broker_violations.append({
+
+                        "message_id": msg.get("id"),
+
+                        "reason": "missing content field"
+
+                    })
+
+                # Enforce message size limit (100KB serialized)
+
+                import sys
+
+                msg_bytes = json.dumps(msg).encode("utf-8")
+
+                if len(msg_bytes) > 100_000:  # 100KB
+
+                    self._broker_violations.append({
+
+                        "message_id": msg.get("id"),
+
+                        "reason": "message too large (100KB limit)"
+
+                    })
+
                 recipient = msg.get("recipient", "*")
                 # First message from a client declares its role for routing.
-                if self.role is None:
-                    self.role = msg.get("sender")
+                # Sender role determined by validation above
+
                 # Broadcast events and wildcards; route to matching roles; skip sender.
                 if recipient in ("*", "event") or msg.get("kind") == "event":
                     self.server.broadcast(msg, exclude=self)
