@@ -137,9 +137,9 @@ class _Handler(socketserver.StreamRequestHandler):
                 self.server._clients.remove(c)
 
 
-def serve(socket_path: Path = DEFAULT_SOCKET) -> _Broker:
+def serve(socket_path: Path | None = None) -> _Broker:
     """Start the broker in a background daemon thread. Returns the server."""
-    broker = _Broker(socket_path)
+    broker = _Broker(socket_path or default_socket())
     thread = threading.Thread(target=broker.serve_forever, daemon=True)
     thread.start()
     return broker
@@ -154,11 +154,12 @@ def send(socket_path: Path, message: dict[str, Any]) -> None:
         s.sendall((json.dumps(message) + "\n").encode())
 
 
-def listen(role: str, socket_path: Path = DEFAULT_SOCKET,
+def listen(role: str, socket_path: Path | None = None,
            on_message=None) -> None:
     """Block and call on_message(msg) for each line addressed to this role."""
     import socket as _socket
 
+    socket_path = socket_path or default_socket()
     with _socket.socket(_socket.AF_UNIX, _socket.SOCK_STREAM) as s:
         s.connect(str(socket_path))
         # Identify self by sending a hello with our role.

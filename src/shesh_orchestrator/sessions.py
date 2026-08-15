@@ -105,18 +105,31 @@ class SessionManager:
                 state.updated = _now()
 
     def _execute_with_cancel(self, sid, orch, goal, planner, critic, context):
-        """Run an Orchestrator.execute but abort early if cancelled."""
+        """Run a plan step by step, aborting between steps if cancelled.
+
+        Mirrors Orchestrator.execute, including critic review, so a session and
+        a direct execute() produce the same result for the same goal. The only
+        difference is the cancellation check between steps.
+
+        Cancellation is checked once per step boundary. A cancel issued while
+        an agent is mid-call is not observed until that call returns; agents
+        would need to accept a cancel token for finer granularity.
+        """
         ctx = dict(context or {})
         plan_result = planner(goal, ctx)
         from .orchestrator import Step
         steps = [Step(role=item.get("role", "coder"),
                       instruction=item.get("instruction", ""))
                  for item in plan_result.get("steps", [])]
-        trace = []
+        trace: list[dict] = []
+
+        def cancelled() -> ExecutionResult:
+            return ExecutionResult(goal, steps, ok=False,
+                                   stopped_reason="cancelled", trace=trace)
+
         for step in steps:
             if sid in self._cancel:
-                return ExecutionResult(goal, steps, ok=False,
-                                       stopped_reason="cancelled", trace=trace)
+                return cancelled()
             agent = orch._agent_for(step.role)
             if not orch.budget.allow():
                 return ExecutionResult(goal, steps, ok=False,

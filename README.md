@@ -1,4 +1,4 @@
-# 🎼 shesh-orchestrator
+# shesh-orchestrator
 
 > **Multi-agent RLM runtime for Shesh.** A coordinator decomposes goals into steps
 > and routes them to role-based child agents (planner, coder, researcher, vision,
@@ -42,7 +42,6 @@ uv run ruff check .
 
 - `execute(goal, max_turns, max_tokens)` — plan → delegate → review
 - `list_roles()` · `post_message(role, content)`
-
 
 > **Reproducible install:** `uv.lock` pins the full dependency tree. Install with
 > `uv sync --frozen` (or `uv pip install -r <(uv export --frozen)`) for a locked build.
