@@ -26,8 +26,11 @@ from pathlib import Path
 from typing import Any
 
 DEFAULT_SOCKET = Path(
-    os.environ.get("SHESH_A2A_SOCKET", "/run/user/{os.getuid()}/shesh-a2a.sock")
+    os.environ.get("SHESH_A2A_SOCKET", f"/run/user/{os.getuid()}/shesh-a2a.sock")
 )
+
+# F-05: 100 KB per line — oversized frames are dropped before parsing.
+MAX_MESSAGE_BYTES = 100_000
 
 
 class _Broker(socketserver.ThreadingUnixStreamServer):
@@ -87,14 +90,26 @@ class _Handler(socketserver.StreamRequestHandler):
         self.role: str | None = None
         try:
             for raw in self.rfile:
+                # Hard size cap: refuse to even parse an oversized line.
+                if len(raw) > MAX_MESSAGE_BYTES:
+                    continue
                 try:
                     msg = json.loads(raw.decode())
-                except json.JSONDecodeError:
+                except (json.JSONDecodeError, UnicodeDecodeError):
+                    continue
+                # F-05: reject malformed messages — a message must declare a
+                # sane sender (its first message binds the routing role) and
+                # carry a content field.
+                sender = msg.get("sender")
+                if not isinstance(sender, str) or not sender or \
+                        any(c in sender for c in ("/", "\\")) or \
+                        any(ord(c) < 32 for c in sender):
+                    continue
+                if self.role is None:
+                    self.role = sender
+                if "content" not in msg:
                     continue
                 recipient = msg.get("recipient", "*")
-                # First message from a client declares its role for routing.
-                if self.role is None:
-                    self.role = msg.get("sender")
                 # Broadcast events and wildcards; route to matching roles; skip sender.
                 if recipient in ("*", "event") or msg.get("kind") == "event":
                     self.server.broadcast(msg, exclude=self)
