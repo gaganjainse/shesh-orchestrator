@@ -4,7 +4,7 @@
 > and routes them to role-based child agents (planner, coder, researcher, vision,
 > critic) over an A2A-lite bus, with turn/token/time budgets.
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python) ![License](https://img.shields.io/badge/License-GPL--3.0--or--later-blue) ![Tests](https://img.shields.io/badge/Tests-28-success) ![CI](https://github.com/gaganjainse/shesh-orchestrator/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python) ![License](https://img.shields.io/badge/License-GPL--3.0--or--later-blue) ![Tests](https://img.shields.io/badge/Tests-36-success) ![CI](https://github.com/gaganjainse/shesh-orchestrator/actions/workflows/ci.yml/badge.svg)
 
 - **License:** GPL-3.0-or-later
 - **Owner:** Gagan Jain ([@gaganjainse](https://github.com/gaganjainse))
@@ -24,7 +24,7 @@ specialist roles while the Brain (policy) still gates every tool call.
 
 ```bash
 uv sync --extra dev
-uv run pytest -q        # 28 tests
+uv run pytest -q        # 36 tests
 uv run ruff check .
 ```
 
