@@ -77,6 +77,22 @@ def test_step_failure_is_caught():
     assert "nope" in res.stopped_reason
 
 
+def test_budget_token_accounting_is_not_double_counted():
+    # Budget.record() must add per-step deltas, not the agent's cumulative
+    # lifetime counters — otherwise completed steps are charged again on
+    # every subsequent step (regression for the audit finding "budget.allow()
+    # reads stale pre-run token counts").
+    b = Budget(max_turns=10, max_tokens=50)
+    a = make_agent("researcher", lambda p, c: {"ok": True})
+    a.run("x" * 400, {})          # agent counters are now cumulative
+    assert b.used_tokens == 0
+    assert b.allow()              # pre-step gate sees only recorded spend
+    b.record(a.in_tokens, a.out_tokens)   # record this step's actual deltas
+    assert b.used_tokens == a.in_tokens + a.out_tokens
+    assert b.used_tokens > 0
+    assert not b.allow()          # recorded spend >= max_tokens -> blocked
+
+
 def test_critic_can_reject():
     agents = _agents()
     orch = Orchestrator(agents)

@@ -83,14 +83,16 @@ class Orchestrator:
         trace: list[dict[str, Any]] = []
         # 2. Execute steps
         for step in steps:
-            if not self.budget.allow(self.agents.get(step.role, next(iter(self.agents.values())))):
+            if not self.budget.allow():
                 return ExecutionResult(goal, steps, ok=False,
                                       stopped_reason="budget exhausted", trace=trace)
             try:
                 agent = self._agent_for(step.role)
+                in_before, out_before = agent.in_tokens, agent.out_tokens
                 step.result = agent.run(step.instruction, ctx)
                 step.status = "done"
-                self.budget.record(agent)
+                self.budget.record(agent.in_tokens - in_before,
+                                   agent.out_tokens - out_before)
                 self._log("step_done", role=step.role)
                 self.bus.post(Message(
                     sender=agent.id, recipient="coordinator",
