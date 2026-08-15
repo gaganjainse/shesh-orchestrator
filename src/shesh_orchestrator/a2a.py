@@ -25,6 +25,7 @@ import threading
 from pathlib import Path
 from typing import Any
 
+
 def default_socket() -> Path:
     """Resolve the broker socket path.
 
