@@ -15,4 +15,4 @@ jobs:
     # Decision D1: pipeline definition lives in shesh-ecosystem; only
     # this repo's deltas below — do NOT vendor steps back into this file.
     with:
-      existing-repos: "shesh-audit"
+      existing-repos: "shesh-core"
