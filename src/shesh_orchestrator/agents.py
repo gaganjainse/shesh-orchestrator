@@ -40,12 +40,20 @@ class Budget:
     used_turns: int = 0
     used_tokens: int = 0
 
-    def allow(self, agent: Agent) -> bool:
+    def allow(self) -> bool:
+        """Pre-step gate: is there turn and token headroom left?
+
+        This is a lower-bound check against spend recorded for completed
+        steps. A single step can still push spend past ``max_tokens``, and
+        the gate then blocks the *next* step. (Projecting an upcoming step's
+        cost would require prompt-length estimation before the LLM call, so
+        we deliberately check only recorded spend.)
+        """
         return (
             self.used_turns < self.max_turns
-            and (self.used_tokens + agent.in_tokens + agent.out_tokens) < self.max_tokens
+            and self.used_tokens < self.max_tokens
         )
 
-    def record(self, agent: Agent) -> None:
+    def record(self, in_tokens: int, out_tokens: int) -> None:
         self.used_turns += 1
-        self.used_tokens += agent.in_tokens + agent.out_tokens
+        self.used_tokens += in_tokens + out_tokens

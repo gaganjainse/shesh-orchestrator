@@ -20,7 +20,7 @@ from typing import Any
 from .agents import Agent, Budget
 from .bus import MessageBus
 from .orchestrator import ExecutionResult, Orchestrator
-from .stubs import always_approve, default_planner
+from .stubs import default_planner
 from .traces import get_recorder
 
 
@@ -58,7 +58,7 @@ class SessionManager:
         self.bus = bus or MessageBus()
         self.budget = budget or Budget()
         self.planner = planner or default_planner
-        self.critic = critic or always_approve
+        self.critic = critic
         self._sessions: dict[str, SessionState] = {}
         self._threads: dict[str, threading.Thread] = {}
         self._cancel: set[str] = set()
@@ -80,26 +80,24 @@ class SessionManager:
         recorder = get_recorder()
         try:
             with recorder.trace(f'session:{sid}', goal=state.goal) as span:
-                state_span = span
                 orch = Orchestrator(self.agents, bus=self.bus, budget=self.budget)
-
-            result: ExecutionResult = self._execute_with_cancel(sid, orch,
-                state.goal, self.planner, self.critic, context=None)
-            with self._lock:
-                state.trace = result.trace
-                state_span.set_attribute('steps', len(result.steps))
-                state.result = {
-                    "ok": result.ok,
-                    "steps": [{"role": s.role, "status": s.status} for s in result.steps],
-                    "stopped_reason": result.stopped_reason,
-                }
-                if result.stopped_reason == "cancelled" or sid in self._cancel:
-                    state.status = "cancelled"
-                else:
-                    state.status = "done" if result.ok else "failed"
-                    if not result.ok:
-                        state.error = result.stopped_reason or state.error
-                state.updated = _now()
+                result = self._execute_with_cancel(sid, orch,
+                    state.goal, self.planner, self.critic, context=None)
+                with self._lock:
+                    state.trace = result.trace
+                    span.set_attribute('steps', len(result.steps))
+                    state.result = {
+                        "ok": result.ok,
+                        "steps": [{"role": s.role, "status": s.status} for s in result.steps],
+                        "stopped_reason": result.stopped_reason,
+                    }
+                    if result.stopped_reason == "cancelled" or sid in self._cancel:
+                        state.status = "cancelled"
+                    else:
+                        state.status = "done" if result.ok else "failed"
+                        if not result.ok:
+                            state.error = result.stopped_reason or state.error
+                    state.updated = _now()
         except Exception as e:  # noqa: BLE001
             with self._lock:
                 state.status = "failed"
@@ -120,19 +118,15 @@ class SessionManager:
                 return ExecutionResult(goal, steps, ok=False,
                                        stopped_reason="cancelled", trace=trace)
             agent = orch._agent_for(step.role)
-            if sid in self._cancel:
-                return ExecutionResult(goal, steps, ok=False,
-                                       stopped_reason="cancelled", trace=trace)
-            if not orch.budget.allow(agent):
-                if sid in self._cancel:
-                    return ExecutionResult(goal, steps, ok=False,
-                                           stopped_reason="cancelled", trace=trace)
+            if not orch.budget.allow():
                 return ExecutionResult(goal, steps, ok=False,
                                        stopped_reason="budget exhausted", trace=trace)
+            in_before, out_before = agent.in_tokens, agent.out_tokens
             try:
                 step.result = agent.run(step.instruction, ctx)
                 step.status = "done"
-                orch.budget.record(agent)
+                orch.budget.record(agent.in_tokens - in_before,
+                                   agent.out_tokens - out_before)
             except Exception as e:  # noqa: BLE001
                 step.status = "failed"
                 step.result = {"error": str(e)}
@@ -141,7 +135,19 @@ class SessionManager:
             trace.append({"role": step.role, "instruction": step.instruction,
                           "result": step.result})
             ctx["prior"] = trace
-        return ExecutionResult(goal, steps, ok=True, trace=trace)
+            # A cancel issued while the step was running is honoured here.
+            # It cannot interrupt an in-flight LLM call — that needs an
+            # event + timeout wired into Agent.run.
+            if sid in self._cancel:
+                return ExecutionResult(goal, steps, ok=False,
+                                       stopped_reason="cancelled", trace=trace)
+        ok = True
+        reason = ""
+        if critic is not None:
+            review = critic(goal, {"steps": trace, **ctx})
+            ok = bool(review.get("approved", True))
+            reason = review.get("notes", "")
+        return ExecutionResult(goal, steps, ok=ok, stopped_reason=reason, trace=trace)
 
     def get(self, sid: str) -> SessionState | None:
         return self._sessions.get(sid)

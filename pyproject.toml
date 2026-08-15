@@ -1,7 +1,7 @@
 [project]
 name = "shesh-orchestrator"
 version = "0.1.0"
-description = "Shesh Mind: multi-agent RLM runtime (coordinator/planner/coder/researcher/vision/critic) over A2A"
+description = "Shesh Orchestrator: multi-agent RLM runtime (coordinator/planner/coder/researcher/vision/critic) over A2A"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "GPL-3.0-or-later" }
