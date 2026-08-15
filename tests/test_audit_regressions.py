@@ -101,7 +101,9 @@ def test_session_honours_a_rejecting_critic():
 
     assert state.result is not None
     assert state.result["ok"] is False
-    assert state.result["stopped_reason"] == "critic rejected"
+    # The reason carries the critic's own notes, which is more useful than a
+    # fixed string when diagnosing why a session stopped.
+    assert state.result["stopped_reason"] == "not good enough"
 
 
 def _wait(mgr, sid, timeout=5.0):

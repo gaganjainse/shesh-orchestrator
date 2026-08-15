@@ -25,9 +25,21 @@ import threading
 from pathlib import Path
 from typing import Any
 
-DEFAULT_SOCKET = Path(
-    os.environ.get("SHESH_A2A_SOCKET", f"/run/user/{os.getuid()}/shesh-a2a.sock")
-)
+def default_socket() -> Path:
+    """Resolve the broker socket path.
+
+    Evaluated at call time, not import time, so a changed UID or
+    SHESH_A2A_SOCKET is respected by tests and by re-exec.
+    """
+    override = os.environ.get("SHESH_A2A_SOCKET")
+    if override:
+        return Path(override)
+    runtime = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{os.getuid()}"
+    return Path(runtime) / "shesh-a2a.sock"
+
+
+# Backwards-compatible module attribute; prefer default_socket().
+DEFAULT_SOCKET = default_socket()
 
 # F-05: 100 KB per line — oversized frames are dropped before parsing.
 MAX_MESSAGE_BYTES = 100_000
