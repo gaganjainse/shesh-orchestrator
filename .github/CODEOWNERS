@@ -1,0 +1,4 @@
+# Every path has one owner: the sole maintainer.
+# GitHub uses this for review requests; it does not enforce merges
+# without a branch protection rule that requires owner review.
+*       @gaganjainse

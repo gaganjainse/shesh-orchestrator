@@ -9,6 +9,10 @@ on:
 # Least privilege by default; jobs that write declare it explicitly.
 permissions: read-all
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   component:
     uses: gaganjainse/shesh-ecosystem/.github/workflows/component-ci.yml@73ebe6a0cdccbde21dd1177b884da630cc4876e9  # first-party reusable pipeline (D1); @main so rewrites never orphan the pin

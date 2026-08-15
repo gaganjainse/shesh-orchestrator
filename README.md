@@ -24,7 +24,7 @@ specialist roles while the Brain (policy) still gates every tool call.
 
 ```bash
 uv sync --extra dev
-uv run pytest -q        # 36 tests
+uv run pytest -q        # the test suite
 uv run ruff check .
 ```
 
