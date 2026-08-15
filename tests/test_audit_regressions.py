@@ -13,7 +13,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from shesh_orchestrator import a2a  # noqa: E402
 from shesh_orchestrator.sessions import SessionManager  # noqa: E402
 
-
 # ── BUG-1: the broker socket path was a non-f string ────────────────────────
 
 def test_socket_path_has_no_literal_braces():
@@ -106,6 +105,13 @@ def test_session_honours_a_rejecting_critic():
     assert state.result["stopped_reason"] == "not good enough"
 
 
+class SessionTimeout(AssertionError):
+    """A session did not reach a terminal state in time."""
+
+    def __init__(self, sid: str, timeout: float) -> None:
+        super().__init__(f"session {sid} did not finish within {timeout}s")
+
+
 def _wait(mgr, sid, timeout=5.0):
     import time
     deadline = time.time() + timeout
@@ -114,4 +120,4 @@ def _wait(mgr, sid, timeout=5.0):
         if st and st.status in {"done", "failed", "cancelled"}:
             return st
         time.sleep(0.02)
-    raise AssertionError(f"session {sid} did not finish within {timeout}s")
+    raise SessionTimeout(sid, timeout)
