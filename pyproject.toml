@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "GPL-3.0-or-later" }
 authors = [{ name = "Gagan Jain" }]
-dependencies = ["fastmcp>=3.4.7,<4", "shesh-core>=0.1"]
+dependencies = ["fastmcp>=3.4.7,<5", "shesh-core>=0.1"]
 
 [project.optional-dependencies]
 dev = ["pytest>=9.1,<10", "ruff>=0.16,<1"]
